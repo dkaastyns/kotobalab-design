@@ -75,7 +75,7 @@ export default function ContactPage() {
 
               <div className="flex flex-col gap-2">
                 <Label htmlFor="contact-subject">Topic</Label>
-                <Select value={subject} onValueChange={setSubject}>
+                <Select value={subject} onValueChange={(val) => val && setSubject(val)}>
                   <SelectTrigger id="contact-subject" className="rounded-xl border-border bg-background/50 h-11 text-sm">
                     <SelectValue placeholder="Select a topic" />
                   </SelectTrigger>

@@ -82,8 +82,11 @@ export function BookmarksContent() {
   const [sortBy, setSortBy] = useState<"newest" | "level" | "type">("newest")
 
   useEffect(() => {
-    setItems(loadBookmarks())
-    setIsLoaded(true)
+    const timer = setTimeout(() => {
+      setItems(loadBookmarks())
+      setIsLoaded(true)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   useEffect(() => {
@@ -232,7 +235,7 @@ export function BookmarksContent() {
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-muted-foreground uppercase">Type</label>
-                <Select value={newType} onValueChange={setNewType}>
+                <Select value={newType} onValueChange={(val) => val && setNewType(val)}>
                   <SelectTrigger className="rounded-xl h-10 text-sm">
                     <SelectValue />
                   </SelectTrigger>
@@ -245,7 +248,7 @@ export function BookmarksContent() {
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-xs font-semibold text-muted-foreground uppercase">JLPT Level</label>
-                <Select value={newLevel} onValueChange={setNewLevel}>
+                <Select value={newLevel} onValueChange={(val) => val && setNewLevel(val)}>
                   <SelectTrigger className="rounded-xl h-10 text-sm">
                     <SelectValue />
                   </SelectTrigger>

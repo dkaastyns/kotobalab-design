@@ -7,7 +7,7 @@ import {
   BookOpen, Layers, Bot, FileText, Clock, Zap, Brain, PenTool, BookMarked,
 } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -120,12 +120,13 @@ export function DashboardContent() {
               </h2>
               <p className="mt-1 text-sm text-muted-foreground max-w-sm">{motivation}</p>
             </div>
-            <Button size="lg" className="h-11 px-5 shrink-0" asChild>
-              <Link href="/practice">
-                Lanjutkan belajar
-                <ArrowRight data-icon="inline-end" />
-              </Link>
-            </Button>
+            <Link
+              href="/practice"
+              className={cn(buttonVariants({ size: "lg" }), "h-11 px-5 shrink-0")}
+            >
+              Lanjutkan belajar
+              <ArrowRight data-icon="inline-end" />
+            </Link>
           </CardContent>
         </Card>
       </motion.div>
@@ -262,9 +263,12 @@ export function DashboardContent() {
                   <Zap className="size-4 text-amber-500" /> +{todaysChallenge.xp} XP
                 </span>
               </div>
-              <Button className="w-full mt-auto" asChild>
-                <Link href="/practice">Mulai tantangan</Link>
-              </Button>
+              <Link
+                href="/practice"
+                className={cn(buttonVariants({ variant: "default" }), "w-full mt-auto text-center flex items-center justify-center")}
+              >
+                Mulai tantangan
+              </Link>
             </CardContent>
           </Card>
         </motion.div>
@@ -326,9 +330,12 @@ export function DashboardContent() {
           <Card className="shadow-soft h-full">
             <CardHeader className="flex-row items-center justify-between">
               <CardTitle className="text-lg">Lanjutkan Belajar</CardTitle>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href="/jlpt" className="text-xs text-muted-foreground">Lihat semua <ArrowRight className="size-3 ml-1" /></Link>
-              </Button>
+              <Link
+                href="/jlpt"
+                className={cn(buttonVariants({ variant: "ghost", size: "sm" }), "text-xs text-muted-foreground flex items-center gap-1")}
+              >
+                Lihat semua <ArrowRight className="size-3" />
+              </Link>
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               {continueLearning.map((c) => (

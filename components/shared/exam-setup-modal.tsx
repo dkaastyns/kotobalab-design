@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
 interface ExamSetupModalProps {
-  children: React.ReactNode
+  children: React.ReactElement
   defaultTopic?: string
   defaultMode?: "practice" | "exam"
 }
@@ -58,9 +58,7 @@ export function ExamSetupModal({ children, defaultTopic = "N5", defaultMode = "p
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children}
-      </DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">

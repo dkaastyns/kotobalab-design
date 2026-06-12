@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Clock, Flag, ChevronLeft, ChevronRight, CheckCircle2, Loader2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 
@@ -49,7 +49,7 @@ export function ExamContent() {
       }
     }
     fetchQuestions()
-  }, [])
+  }, [topic, totalCount])
 
   useEffect(() => {
     if (isLoading || !useTimer) return
@@ -112,9 +112,12 @@ export function ExamContent() {
             {mins}:{secs}
           </div>
         )}
-        <Button variant="destructive" asChild>
-          <Link href="/dashboard">Submit exam</Link>
-        </Button>
+        <Link
+          href="/dashboard"
+          className={cn(buttonVariants({ variant: "destructive" }))}
+        >
+          Submit exam
+        </Link>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_280px]">
@@ -215,12 +218,13 @@ export function ExamContent() {
                 <Flag className="size-3 fill-destructive text-destructive" /> Flagged for review
               </span>
             </div>
-            <Button variant="secondary" className="w-full" asChild>
-              <Link href="/dashboard">
-                <CheckCircle2 data-icon="inline-start" />
-                Review &amp; submit
-              </Link>
-            </Button>
+            <Link
+              href="/dashboard"
+              className={cn(buttonVariants({ variant: "secondary" }), "w-full text-center flex items-center justify-center gap-1.5")}
+            >
+              <CheckCircle2 data-icon="inline-start" className="size-4" />
+              Review &amp; submit
+            </Link>
           </CardContent>
         </Card>
       </div>

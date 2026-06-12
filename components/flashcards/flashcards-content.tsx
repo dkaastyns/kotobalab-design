@@ -140,8 +140,10 @@ export function FlashcardsContent() {
       {/* Controls */}
       <motion.div variants={fadeInUp} className="flex items-center justify-between">
         <Select value={activeDeck} onValueChange={(val) => {
-          setActiveDeck(val)
-          handleReset()
+          if (val) {
+            setActiveDeck(val)
+            handleReset()
+          }
         }}>
           <SelectTrigger className="w-[180px] rounded-xl bg-card border-border/80">
             <Layers className="size-4 mr-2" />
@@ -177,7 +179,7 @@ export function FlashcardsContent() {
                   <Input placeholder="Reading (Kana/Romaji)" value={newReading} onChange={e => setNewReading(e.target.value)} className="rounded-xl" />
                   <Input placeholder="Back (Indonesian)" value={newBack} onChange={e => setNewBack(e.target.value)} className="rounded-xl" />
                   <Input placeholder="Example sentence" value={newExample} onChange={e => setNewExample(e.target.value)} className="rounded-xl" />
-                  <Select value={newDeck} onValueChange={setNewDeck}>
+                  <Select value={newDeck} onValueChange={(val) => val && setNewDeck(val)}>
                     <SelectTrigger className="rounded-xl">
                       <SelectValue placeholder="Deck" />
                     </SelectTrigger>

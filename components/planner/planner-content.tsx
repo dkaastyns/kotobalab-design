@@ -69,10 +69,12 @@ export function PlannerContent() {
   const newTaskRef = useRef<HTMLInputElement>(null)
   const editRef = useRef<HTMLInputElement>(null)
 
-  // Load from localStorage on mount
   useEffect(() => {
-    setSchedule(loadPlanner())
-    setIsLoaded(true)
+    const timer = setTimeout(() => {
+      setSchedule(loadPlanner())
+      setIsLoaded(true)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   // Save to localStorage on every change
@@ -302,7 +304,7 @@ export function PlannerContent() {
       {addingDay && (
         <Card className="border-primary/20 shadow-soft rounded-2xl p-4 animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2">
-            <Select value={newDayName} onValueChange={setNewDayName}>
+            <Select value={newDayName} onValueChange={(val) => val && setNewDayName(val)}>
               <SelectTrigger className="flex-1 rounded-xl h-10 text-sm">
                 <SelectValue placeholder="Select or type a day..." />
               </SelectTrigger>
@@ -460,7 +462,7 @@ export function PlannerContent() {
                       onKeyDown={(e) => { if (e.key === "Enter") addTask(day.id); if (e.key === "Escape") { setNewTaskDay(null); setNewTaskText("") } }}
                       className="flex-1 h-9 rounded-lg text-sm border-border/60 bg-background/80"
                     />
-                    <Select value={newTaskCategory} onValueChange={setNewTaskCategory}>
+                    <Select value={newTaskCategory} onValueChange={(val) => val && setNewTaskCategory(val)}>
                       <SelectTrigger className="w-[120px] h-9 rounded-lg text-xs">
                         <SelectValue />
                       </SelectTrigger>

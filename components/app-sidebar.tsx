@@ -109,9 +109,12 @@ export function AppSidebar() {
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
-    const stored = localStorage.getItem("sidebar-collapsed")
-    if (stored) setCollapsed(stored === "true")
+    const timer = setTimeout(() => {
+      setIsMounted(true)
+      const stored = localStorage.getItem("sidebar-collapsed")
+      if (stored) setCollapsed(stored === "true")
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   const toggleCollapse = () => {

@@ -1,13 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import { Check, X, Sparkles, ArrowRight, Bookmark, Lightbulb, RotateCcw, BookOpen, Zap, Loader2, Timer, Trophy, Flame, Star, Brain } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { cn } from "@/lib/utils"
 import { useCurrentUser } from "@/hooks/use-user"
@@ -50,6 +50,25 @@ export function PracticeContent() {
   const [correctCount, setCorrectCount] = useState(0)
   const [sessionDone, setSessionDone] = useState(false)
 
+  const isCorrect = q && selected === q.correct
+
+  const reset = () => {
+    setSelected(null)
+    setSubmitted(false)
+  }
+
+  const handleCheck = useCallback(() => {
+    setSubmitted(true)
+    if (q && selected === q.correct) {
+      setCombo(c => c + 1)
+      setCorrectCount(c => c + 1)
+      incrementStreak()
+      addNotification("Streak Tersimpan! 🔥", "Kamu menjawab benar dan menjaga streak harianmu.")
+    } else {
+      setCombo(0)
+    }
+  }, [q, selected, incrementStreak, addNotification])
+
   useEffect(() => {
     if (!useTimer || isLoading || submitted) return;
     const interval = setInterval(() => {
@@ -63,7 +82,7 @@ export function PracticeContent() {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [useTimer, isLoading, submitted])
+  }, [useTimer, isLoading, submitted, handleCheck])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -94,28 +113,12 @@ export function PracticeContent() {
   }
 
   useEffect(() => {
-    fetchQuestion()
+    const timer = setTimeout(() => {
+      fetchQuestion()
+    }, 0)
+    return () => clearTimeout(timer)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const isCorrect = q && selected === q.correct
-
-  function reset() {
-    setSelected(null)
-    setSubmitted(false)
-  }
-
-  const handleCheck = () => {
-    setSubmitted(true)
-    if (q && selected === q.correct) {
-      setCombo(c => c + 1)
-      setCorrectCount(c => c + 1)
-      incrementStreak()
-      addNotification("Streak Tersimpan! 🔥", "Kamu menjawab benar dan menjaga streak harianmu.")
-    } else {
-      setCombo(0)
-    }
-  }
   
   const handleNext = () => {
     if (number >= totalCount) {
@@ -172,9 +175,12 @@ export function PracticeContent() {
           <Button onClick={() => { setSessionDone(false); setNumber(1); setCorrectCount(0); setCombo(0); fetchQuestion() }} className="rounded-xl px-6">
             <Brain className="size-4 mr-2" /> Latihan Lagi
           </Button>
-          <Button variant="outline" asChild className="rounded-xl px-6">
-            <Link href="/dashboard">Kembali ke Dashboard</Link>
-          </Button>
+          <Link
+            href="/dashboard"
+            className={cn(buttonVariants({ variant: "outline" }), "rounded-xl px-6")}
+          >
+            Kembali ke Dashboard
+          </Link>
         </motion.div>
       </motion.div>
     )
@@ -379,12 +385,13 @@ export function PracticeContent() {
                   <RelatedList icon={BookOpen} title="Kosakata" items={q.relatedVocabulary} />
                   <RelatedList icon={Zap} title="Latihan Selanjutnya" items={q.suggestedPractice} />
                 </div>
-                <Button variant="outline" size="sm" className="w-fit" asChild>
-                  <Link href="/tutor">
-                    <Sparkles data-icon="inline-start" />
-                    Tanya tutor lebih lanjut
-                  </Link>
-                </Button>
+                <Link
+                  href="/tutor"
+                  className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-fit flex items-center gap-1.5")}
+                >
+                  <Sparkles className="size-4" />
+                  Tanya tutor lebih lanjut
+                </Link>
               </CardContent>
             </Card>
           </motion.div>

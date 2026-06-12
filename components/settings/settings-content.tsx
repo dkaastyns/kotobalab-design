@@ -87,7 +87,7 @@ function SettingsForm({ user, updateUser }: SettingsFormProps) {
               <Label htmlFor="daily-target" className="text-xs font-semibold text-muted-foreground uppercase">
                 Daily Study Target (Minutes)
               </Label>
-              <Select value={selectedGoal} onValueChange={setSelectedGoal}>
+              <Select value={selectedGoal} onValueChange={(val) => val && setSelectedGoal(val)}>
                 <SelectTrigger id="daily-target" className="rounded-xl border-border bg-background/50 h-10 text-sm">
                   <SelectValue placeholder="Select goal" />
                 </SelectTrigger>

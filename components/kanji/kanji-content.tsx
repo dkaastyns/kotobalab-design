@@ -5,7 +5,7 @@ import { Search, Info, X, Sparkles, Bookmark, BookmarkCheck, Volume2, Loader2, A
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Separator } from "@/components/ui/separator"
 import { kanji } from "@/lib/mock-data"
@@ -269,11 +269,11 @@ export function KanjiContent() {
                     {/* Readings */}
                     <div className="grid grid-cols-2 gap-3">
                       <div className="rounded-xl bg-muted/50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">On'yomi</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{"On'yomi"}</p>
                         <p className="text-sm font-bold font-display">{selectedKanji.on}</p>
                       </div>
                       <div className="rounded-xl bg-muted/50 p-3">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Kun'yomi</p>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">{"Kun'yomi"}</p>
                         <p className="text-sm font-bold font-display">{selectedKanji.kun}</p>
                       </div>
                     </div>
@@ -396,25 +396,20 @@ export function KanjiContent() {
 
                     {/* Action buttons */}
                     <div className="flex flex-col gap-2 pb-1">
-                      <Button
-                        asChild
-                        className="w-full rounded-xl h-10 bg-primary text-primary-foreground font-medium"
+                      <Link
+                        href={`/practice?topic=${selectedKanji.level}&context=${encodeURIComponent(selectedKanji.char)}`}
+                        className={cn(buttonVariants({ variant: "default" }), "w-full rounded-xl h-10 bg-primary text-primary-foreground font-medium flex items-center justify-center")}
                       >
-                        <Link href={`/practice?topic=${selectedKanji.level}&context=${encodeURIComponent(selectedKanji.char)}`}>
-                          <Sparkles className="size-4 mr-2" />
-                          Latihan soal tentang {selectedKanji.char}
-                        </Link>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full rounded-xl h-10"
-                        asChild
+                        <Sparkles className="size-4 mr-2" />
+                        Latihan soal tentang {selectedKanji.char}
+                      </Link>
+                      <Link
+                        href={`/flashcards`}
+                        className={cn(buttonVariants({ variant: "outline" }), "w-full rounded-xl h-10 flex items-center justify-center")}
                       >
-                        <Link href={`/flashcards`}>
-                          <Layers className="size-4 mr-2" />
-                          Buka Flashcard
-                        </Link>
-                      </Button>
+                        <Layers className="size-4 mr-2" />
+                        Buka Flashcard
+                      </Link>
                     </div>
                   </CardContent>
                 </Card>
