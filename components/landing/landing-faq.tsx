@@ -70,7 +70,7 @@ export function LandingFaq() {
         <p className="mx-auto mt-3 max-w-md leading-relaxed text-muted-foreground">
           Join 50,000+ learners mastering Japanese and English with AI.
         </p>
-        <Button size="lg" className="mt-6 h-12 px-6 text-base" render={
+        <Button size="lg" className="mt-6 h-12 px-6 text-base" nativeButton={false} render={
           <Link href="/register">
             Get started free
             <ArrowRight data-icon="inline-end" />

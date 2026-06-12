@@ -29,13 +29,13 @@ export function LandingHero() {
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <Button size="lg" className="h-12 px-6 text-base" render={
+            <Button size="lg" className="h-12 px-6 text-base" nativeButton={false} render={
               <Link href="/register">
                 Start learning
                 <ArrowRight data-icon="inline-end" />
               </Link>
             } />
-            <Button variant="outline" size="lg" className="h-12 px-6 text-base" render={
+            <Button variant="outline" size="lg" className="h-12 px-6 text-base" nativeButton={false} render={
               <a href="#features">Explore features</a>
             } />
           </div>

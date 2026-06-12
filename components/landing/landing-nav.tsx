@@ -6,10 +6,10 @@ import { Sparkles, Menu, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const links = [
-  { label: "Features", href: "#features" },
-  { label: "AI Tutor", href: "#ai-tutor" },
-  { label: "Analytics", href: "#analytics" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Features", href: "/features" },
+  { label: "AI Tutor", href: "/ai-tutor" },
+  { label: "Analytics", href: "/analytics-info" },
+  { label: "FAQ", href: "/faq" },
 ]
 
 export function LandingNav() {
@@ -26,19 +26,19 @@ export function LandingNav() {
 
         <nav className="ml-8 hidden items-center gap-1 md:flex">
           {links.map((l) => (
-            <a
+            <Link
               key={l.href}
               href={l.href}
               className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {l.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
         <div className="ml-auto hidden items-center gap-2 md:flex">
-          <Button variant="ghost" size="lg" render={<Link href="/login">Sign in</Link>} />
-          <Button size="lg" render={<Link href="/register">Get started</Link>} />
+          <Button variant="ghost" size="lg" nativeButton={false} render={<Link href="/login">Sign in</Link>} />
+          <Button size="lg" nativeButton={false} render={<Link href="/register">Get started</Link>} />
         </div>
 
         <Button
@@ -56,18 +56,18 @@ export function LandingNav() {
         <div className="border-t border-border bg-background px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-1">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
                 onClick={() => setOpen(false)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-muted-foreground hover:bg-muted"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
             <div className="mt-2 flex flex-col gap-2">
-              <Button variant="outline" render={<Link href="/login">Sign in</Link>} />
-              <Button render={<Link href="/register">Get started</Link>} />
+              <Button variant="outline" nativeButton={false} render={<Link href="/login">Sign in</Link>} />
+              <Button nativeButton={false} render={<Link href="/register">Get started</Link>} />
             </div>
           </nav>
         </div>

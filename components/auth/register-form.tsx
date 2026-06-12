@@ -17,6 +17,27 @@ export function RegisterForm() {
       className="flex flex-col gap-5"
       onSubmit={(e) => {
         e.preventDefault()
+        const target = e.target as HTMLFormElement
+        const nameInput = target.elements.namedItem("name") as HTMLInputElement
+        const emailInput = target.elements.namedItem("email") as HTMLInputElement
+        const name = nameInput?.value || "Guest User"
+        const email = emailInput?.value || ""
+
+        localStorage.setItem("user", JSON.stringify({
+          name: name,
+          email: email,
+          avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${name}`,
+          initials: name.charAt(0).toUpperCase() || "G",
+          level: "N5",
+          joined: "June 2026",
+          plan: "Free",
+          streakDays: 1,
+          bestStreak: 1,
+          notifications: [
+            { id: "1", title: "Welcome to KotobaLab!", description: "Start by trying out a daily practice or reading the JLPT guide.", time: "Just now", unread: true }
+          ]
+        }))
+
         router.push("/dashboard")
       }}
     >
@@ -64,8 +85,8 @@ export function RegisterForm() {
 
       <p className="text-center text-xs leading-relaxed text-muted-foreground">
         By signing up you agree to our{" "}
-        <a href="#" className="text-accent hover:underline">Terms</a> and{" "}
-        <a href="#" className="text-accent hover:underline">Privacy Policy</a>.
+        <Link href="/terms" className="text-accent hover:underline">Terms</Link> and{" "}
+        <Link href="/privacy" className="text-accent hover:underline">Privacy Policy</Link>.
       </p>
 
       <p className="text-center text-sm text-muted-foreground">

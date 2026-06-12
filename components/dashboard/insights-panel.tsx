@@ -21,7 +21,7 @@ export function InsightsPanel() {
               <p className="mt-0.5 text-xs text-muted-foreground">{r.reason}</p>
             </div>
           ))}
-          <Button variant="ghost" size="sm" className="w-full justify-between" render={
+          <Button variant="ghost" size="sm" className="w-full justify-between" nativeButton={false} render={
             <Link href="/tutor">
               Ask the AI tutor <ArrowRight data-icon="inline-end" />
             </Link>

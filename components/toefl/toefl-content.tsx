@@ -5,9 +5,10 @@ import { ScrollText, Headphones, Mic, PenLine, ArrowRight, Trophy } from "lucide
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { CircularProgress } from "@/components/circular-progress"
 import { toeflSections, toeflReadiness } from "@/lib/mock-data"
+import { cn } from "@/lib/utils"
 
 const sectionIcons = {
   Reading: ScrollText,
@@ -32,12 +33,10 @@ export function ToeflContent() {
               Your projected TOEFL iBT score based on practice performance. Target a balanced profile across all four
               sections.
             </p>
-            <Button asChild className="mt-2 w-fit">
-              <Link href="/exam">
-                <Trophy data-icon="inline-start" />
-                Start full mock test
-              </Link>
-            </Button>
+            <Link href="/exam" className={cn(buttonVariants({ variant: "default", size: "default" }), "mt-2 w-fit")}>
+              <Trophy data-icon="inline-start" />
+              Start full mock test
+            </Link>
           </div>
           <CircularProgress value={toeflReadiness.score} max={120} size={96} label="readiness" />
         </CardContent>
@@ -64,12 +63,10 @@ export function ToeflContent() {
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <Progress value={s.progress} />
-                <Button variant="secondary" className="w-full" asChild>
-                  <Link href="/practice">
-                    Practice {s.name}
-                    <ArrowRight data-icon="inline-end" />
-                  </Link>
-                </Button>
+                <Link href="/practice" className={cn(buttonVariants({ variant: "secondary", size: "default" }), "w-full")}>
+                  Practice {s.name}
+                  <ArrowRight data-icon="inline-end" />
+                </Link>
               </CardContent>
             </Card>
           )

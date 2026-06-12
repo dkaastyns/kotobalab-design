@@ -35,6 +35,7 @@ export function AuthShell({
             width={420}
             height={300}
             className="mx-auto h-auto w-full max-w-sm rounded-3xl"
+            priority
           />
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-balance">

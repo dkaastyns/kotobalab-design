@@ -17,6 +17,46 @@ export function LoginForm() {
       className="flex flex-col gap-5"
       onSubmit={(e) => {
         e.preventDefault()
+        const target = e.target as HTMLFormElement
+        const emailInput = target.elements.namedItem("email") as HTMLInputElement
+        const email = emailInput?.value || ""
+
+        if (email === "dikatzy@kotobalab.app") {
+          localStorage.setItem("user", JSON.stringify({
+            name: "Dikatzy",
+            email: "dikatzy@kotobalab.app",
+            avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=Dikatzy",
+            initials: "D",
+            level: "N3",
+            joined: "June 2026",
+            plan: "Pro",
+            streakDays: 5,
+            bestStreak: 12,
+            notifications: [
+              { id: "1", title: "Daily streak active", description: "You are on a 5-day study streak. Keep going!", time: "10m ago", unread: true },
+              { id: "2", title: "Welcome back, Dikatzy!", description: "Ready to continue your study streak?", time: "Just now", unread: true },
+              { id: "3", title: "Achievement Unlocked!", description: "Sharp Mind badge has been added to your profile.", time: "1h ago", unread: true }
+            ]
+          }))
+        } else {
+          const namePart = email.split("@")[0]
+          const capitalizedName = namePart.charAt(0).toUpperCase() + namePart.slice(1)
+          localStorage.setItem("user", JSON.stringify({
+            name: capitalizedName || "Guest User",
+            email: email,
+            avatar: `https://api.dicebear.com/7.x/adventurer/svg?seed=${capitalizedName}`,
+            initials: capitalizedName.charAt(0) || "G",
+            level: "N5",
+            joined: "June 2026",
+            plan: "Free",
+            streakDays: 1,
+            bestStreak: 1,
+            notifications: [
+              { id: "1", title: "Welcome to KotobaLab!", description: "Start by trying out a daily practice or reading the JLPT guide.", time: "Just now", unread: true }
+            ]
+          }))
+        }
+
         router.push("/dashboard")
       }}
     >
@@ -24,7 +64,7 @@ export function LoginForm() {
         <Label htmlFor="email">Email</Label>
         <div className="relative">
           <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input id="email" type="email" placeholder="you@example.com" defaultValue="aiko@kotobalab.app" className="h-11 rounded-xl pl-9" required />
+          <Input id="email" type="email" placeholder="you@example.com" className="h-11 rounded-xl pl-9" required />
         </div>
       </div>
 
@@ -41,7 +81,6 @@ export function LoginForm() {
             id="password"
             type={show ? "text" : "password"}
             placeholder="••••••••"
-            defaultValue="password"
             className="h-11 rounded-xl px-9"
             required
           />

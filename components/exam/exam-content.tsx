@@ -1,33 +1,86 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
-import { Clock, Flag, ChevronLeft, ChevronRight, CheckCircle2 } from "lucide-react"
+import { Clock, Flag, ChevronLeft, ChevronRight, CheckCircle2, Loader2 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { examQuestions } from "@/lib/mock-data"
 
-const TOTAL_SECONDS = 60 * 45 // 45 min mock
+
+type ExamQuestion = {
+  prompt: string;
+  choices: string[];
+  correct: number;
+}
 
 export function ExamContent() {
+  const searchParams = useSearchParams()
+  const topic = searchParams.get("topic") || "N4"
+  const totalCount = parseInt(searchParams.get("count") || "5", 10)
+  const useTimer = searchParams.get("timer") !== "false"
+
+  const [questions, setQuestions] = useState<ExamQuestion[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<Record<number, number>>({})
   const [flagged, setFlagged] = useState<Set<number>>(new Set())
-  const [seconds, setSeconds] = useState(TOTAL_SECONDS)
+  const [seconds, setSeconds] = useState(totalCount * 60)
 
   useEffect(() => {
-    const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000)
-    return () => clearInterval(t)
+    const fetchQuestions = async () => {
+      try {
+        const res = await fetch("/api/ai/generate-exam", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ level: topic, count: totalCount })
+        })
+        if (!res.ok) throw new Error("Failed to generate exam")
+        const data = await res.json()
+        setQuestions(data.questions)
+      } catch (err: any) {
+        setError(err.message || "Failed to load exam")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    fetchQuestions()
   }, [])
 
-  const q = examQuestions[current]
+  useEffect(() => {
+    if (isLoading || !useTimer) return
+    const t = setInterval(() => setSeconds((s) => (s > 0 ? s - 1 : 0)), 1000)
+    return () => clearInterval(t)
+  }, [isLoading, useTimer])
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+        <Loader2 className="size-10 animate-spin text-primary" />
+        <p className="text-muted-foreground animate-pulse text-lg">Generating your personalized mock exam...</p>
+        <p className="text-sm text-muted-foreground/60">This may take a few seconds...</p>
+      </div>
+    )
+  }
+
+  if (error || questions.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[500px] gap-4">
+        <p className="text-destructive font-medium">{error || "No questions loaded"}</p>
+        <Button onClick={() => window.location.reload()} variant="outline">Try Again</Button>
+      </div>
+    )
+  }
+
+  const q = questions[current]
   const answeredCount = Object.keys(answers).length
   const mins = String(Math.floor(seconds / 60)).padStart(2, "0")
   const secs = String(seconds % 60).padStart(2, "0")
-  const lowTime = seconds < 300
+  const lowTime = seconds < 60 // low time under 1 min
 
   function toggleFlag() {
     setFlagged((prev) => {
@@ -39,24 +92,26 @@ export function ExamContent() {
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Top exam bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border bg-card p-4 shadow-soft">
         <div className="flex flex-col gap-0.5">
-          <span className="text-xs uppercase tracking-wide text-muted-foreground">JLPT N4 — Mock Exam</span>
+          <span className="text-xs uppercase tracking-wide text-muted-foreground">JLPT {topic} — Mock Exam</span>
           <span className="font-semibold">
-            {answeredCount} of {examQuestions.length} answered
+            {answeredCount} of {questions.length} answered
           </span>
         </div>
-        <div
-          className={cn(
-            "flex items-center gap-2 rounded-full px-4 py-2 font-mono text-lg font-semibold tabular-nums",
-            lowTime ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary",
-          )}
-        >
-          <Clock className="size-4" />
-          {mins}:{secs}
-        </div>
+        {useTimer && (
+          <div
+            className={cn(
+              "flex items-center gap-2 rounded-full px-4 py-2 font-mono text-lg font-semibold tabular-nums",
+              lowTime ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary",
+            )}
+          >
+            <Clock className="size-4" />
+            {mins}:{secs}
+          </div>
+        )}
         <Button variant="destructive" asChild>
           <Link href="/dashboard">Submit exam</Link>
         </Button>
@@ -111,7 +166,7 @@ export function ExamContent() {
                 Previous
               </Button>
               <Button
-                disabled={current === examQuestions.length - 1}
+                disabled={current === questions.length - 1}
                 onClick={() => setCurrent((c) => c + 1)}
               >
                 Next
@@ -127,9 +182,9 @@ export function ExamContent() {
             <CardTitle className="text-base">Question palette</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <Progress value={(answeredCount / examQuestions.length) * 100} />
+            <Progress value={(answeredCount / questions.length) * 100} />
             <div className="grid grid-cols-5 gap-2">
-              {examQuestions.map((_, i) => {
+              {questions.map((_, i) => {
                 const answered = answers[i] !== undefined
                 const isFlagged = flagged.has(i)
                 return (

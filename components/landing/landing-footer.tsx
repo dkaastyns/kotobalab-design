@@ -4,15 +4,30 @@ import { Sparkles } from "lucide-react"
 const groups = [
   {
     title: "Product",
-    links: ["Features", "AI Tutor", "Analytics", "Pricing"],
+    links: [
+      { label: "Features", href: "/features" },
+      { label: "AI Tutor", href: "/ai-tutor" },
+      { label: "Analytics", href: "/analytics-info" },
+      { label: "Pricing", href: "/pricing" },
+    ],
   },
   {
     title: "Learn",
-    links: ["JLPT N5–N2", "TOEFL", "Vocabulary", "Kanji"],
+    links: [
+      { label: "JLPT N5–N2", href: "/jlpt-info" },
+      { label: "TOEFL", href: "/toefl-info" },
+      { label: "Vocabulary", href: "/vocabulary-info" },
+      { label: "Kanji", href: "/kanji-info" },
+    ],
   },
   {
     title: "Company",
-    links: ["About", "Blog", "Careers", "Contact"],
+    links: [
+      { label: "About", href: "/about" },
+      { label: "Blog", href: "/blog" },
+      { label: "Careers", href: "/careers" },
+      { label: "Contact", href: "/contact" },
+    ],
   },
 ]
 
@@ -38,10 +53,10 @@ export function LandingFooter() {
               <p className="text-sm font-semibold">{g.title}</p>
               <ul className="mt-4 flex flex-col gap-2.5">
                 {g.links.map((l) => (
-                  <li key={l}>
-                    <a href="#" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-                      {l}
-                    </a>
+                  <li key={l.label}>
+                    <Link href={l.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+                      {l.label}
+                    </Link>
                   </li>
                 ))}
               </ul>
@@ -52,12 +67,13 @@ export function LandingFooter() {
         <div className="mt-10 flex flex-col items-center justify-between gap-4 border-t border-border pt-6 text-sm text-muted-foreground md:flex-row">
           <p>© {new Date().getFullYear()} KotobaLab. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="transition-colors hover:text-foreground">Privacy</a>
-            <a href="#" className="transition-colors hover:text-foreground">Terms</a>
-            <a href="#" className="transition-colors hover:text-foreground">Cookies</a>
+            <Link href="/privacy" className="transition-colors hover:text-foreground">Privacy</Link>
+            <Link href="/terms" className="transition-colors hover:text-foreground">Terms</Link>
+            <Link href="/cookies" className="transition-colors hover:text-foreground">Cookies</Link>
           </div>
         </div>
       </div>
     </footer>
   )
 }
+

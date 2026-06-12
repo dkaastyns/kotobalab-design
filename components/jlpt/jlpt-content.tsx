@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { CircularProgress } from "@/components/circular-progress"
 import { jlptLevels } from "@/lib/mock-data"
+import { ExamSetupModal } from "@/components/shared/exam-setup-modal"
 
 const sectionIcons = [
   { key: "vocabulary", name: "Vocabulary", icon: BookOpen },
@@ -53,21 +54,18 @@ export function JlptContent() {
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
                 <Progress value={lvl.progress} />
-                <Button
-                  asChild={lvl.unlocked}
-                  disabled={!lvl.unlocked}
-                  variant={lvl.unlocked ? "default" : "secondary"}
-                  className="w-full"
-                >
-                  {lvl.unlocked ? (
-                    <Link href="/practice">
+                {lvl.unlocked ? (
+                  <ExamSetupModal defaultTopic={lvl.level} defaultMode="practice">
+                    <Button className="w-full">
                       Study {lvl.level}
                       <ArrowRight data-icon="inline-end" />
-                    </Link>
-                  ) : (
-                    <span>Locked</span>
-                  )}
-                </Button>
+                    </Button>
+                  </ExamSetupModal>
+                ) : (
+                  <Button variant="secondary" disabled className="w-full">
+                    Locked
+                  </Button>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -77,12 +75,12 @@ export function JlptContent() {
       <div>
         <div className="mb-4 flex items-center justify-between">
           <h3 className="text-sm font-medium uppercase tracking-wide text-muted-foreground">N4 sections</h3>
-          <Button variant="ghost" size="sm" asChild>
-            <Link href="/exam">
+          <ExamSetupModal defaultTopic="N4" defaultMode="exam">
+            <Button variant="ghost" size="sm">
               <Trophy data-icon="inline-start" />
               Take mock exam
-            </Link>
-          </Button>
+            </Button>
+          </ExamSetupModal>
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           {sectionIcons.map((s) => {

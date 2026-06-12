@@ -19,7 +19,6 @@ export const dailyGoal = {
 export const streak = {
   days: 27,
   best: 41,
-  // last 12 weeks of activity intensity 0-4
 }
 
 export const todaysChallenge = {
@@ -72,16 +71,7 @@ export const topicPerformance = [
 export const jlptReadiness = { level: "N4", percent: 72 }
 export const toeflReadiness = { score: 92, target: 100 }
 
-export const jlptLevels: {
-  level: JlptLevel
-  label: string
-  progress: number
-  vocabulary: number
-  grammar: number
-  reading: number
-  kanji: number
-  unlocked: boolean
-}[] = [
+export const jlptLevels = [
   { level: "N5", label: "Beginner", progress: 100, vocabulary: 100, grammar: 100, reading: 98, kanji: 100, unlocked: true },
   { level: "N4", label: "Elementary", progress: 72, vocabulary: 88, grammar: 74, reading: 69, kanji: 81, unlocked: true },
   { level: "N3", label: "Intermediate", progress: 34, vocabulary: 41, grammar: 30, reading: 28, kanji: 38, unlocked: true },
@@ -140,6 +130,13 @@ export const vocabulary = [
   { id: 6, word: "提案", reading: "ていあん", meaning: "proposal", level: "N3", mastery: 52, bookmarked: true },
   { id: 7, word: "解決", reading: "かいけつ", meaning: "resolution", level: "N3", mastery: 47, bookmarked: false },
   { id: 8, word: "状況", reading: "じょうきょう", meaning: "situation", level: "N3", mastery: 58, bookmarked: false },
+  { id: 9, word: "準備", reading: "じゅんび", meaning: "preparation", level: "N4", mastery: 85, bookmarked: false },
+  { id: 10, word: "理解", reading: "りかい", meaning: "understanding", level: "N3", mastery: 45, bookmarked: true },
+  { id: 11, word: "興味", reading: "きょうみ", meaning: "interest", level: "N4", mastery: 72, bookmarked: false },
+  { id: 12, word: "目的", reading: "もくてき", meaning: "purpose, goal", level: "N3", mastery: 60, bookmarked: false },
+  { id: 13, word: "約束", reading: "やくそく", meaning: "promise, appointment", level: "N5", mastery: 95, bookmarked: false },
+  { id: 14, word: "情報", reading: "じょうほう", meaning: "information", level: "N3", mastery: 50, bookmarked: true },
+  { id: 15, word: "複雑", reading: "ふくざつ", meaning: "complex, complicated", level: "N3", mastery: 30, bookmarked: true },
 ]
 
 export const kanji = [
@@ -151,14 +148,38 @@ export const kanji = [
   { id: 6, char: "影", meaning: "shadow", on: "エイ", kun: "かげ", level: "N3", strokes: 15, mastery: 33 },
   { id: 7, char: "認", meaning: "recognize", on: "ニン", kun: "みと(める)", level: "N3", strokes: 14, mastery: 40 },
   { id: 8, char: "況", meaning: "condition", on: "キョウ", kun: "—", level: "N3", strokes: 8, mastery: 51 },
+  { id: 9, char: "語", meaning: "language, word", on: "ゴ", kun: "かた(る)", level: "N5", strokes: 14, mastery: 92 },
+  { id: 10, char: "読", meaning: "read", on: "ドク", kun: "よ(む)", level: "N5", strokes: 14, mastery: 89 },
+  { id: 11, char: "書", meaning: "write", on: "ショ", kun: "か(く)", level: "N5", strokes: 10, mastery: 85 },
+  { id: 12, char: "聞", meaning: "hear, ask", on: "ブン", kun: "き(く)", level: "N5", strokes: 14, mastery: 94 },
+  { id: 13, char: "話", meaning: "speak, talk", on: "ワ", kun: "はな(す)", level: "N5", strokes: 13, mastery: 91 },
+  { id: 14, char: "買", meaning: "buy", on: "バイ", kun: "か(う)", level: "N5", strokes: 12, mastery: 87 },
+  { id: 15, char: "行", meaning: "go, conduct", on: "コウ, ギョウ", kun: "い(く), おこな(う)", level: "N5", strokes: 6, mastery: 96 },
 ]
 
 export const flashcards = [
-  { id: 1, front: "勉強", reading: "べんきょう", back: "study", example: "毎日日本語を勉強します。" },
-  { id: 2, front: "経験", reading: "けいけん", back: "experience", example: "いい経験になりました。" },
-  { id: 3, front: "影響", reading: "えいきょう", back: "influence, effect", example: "天気に影響されます。" },
-  { id: 4, front: "提案", reading: "ていあん", back: "proposal, suggestion", example: "新しい提案があります。" },
-  { id: 5, front: "解決", reading: "かいけつ", back: "solution, resolution", example: "問題を解決しました。" },
+  { id: 1, front: "勉強", reading: "べんきょう", back: "study", example: "毎日日本語を勉強します。", deck: "Vocabulary" },
+  { id: 2, front: "経験", reading: "けいけん", back: "experience", example: "いい経験になりました。", deck: "Vocabulary" },
+  { id: 3, front: "影響", reading: "えいきょう", back: "influence, effect", example: "天気に影響されます。", deck: "Vocabulary" },
+  { id: 4, front: "提案", reading: "ていあん", back: "proposal, suggestion", example: "新しい提案があります。", deck: "Vocabulary" },
+  { id: 5, front: "解決", reading: "かいけつ", back: "solution, resolution", example: "問題を解決しました。", deck: "Vocabulary" },
+  { id: 6, front: "準備", reading: "じゅんび", back: "preparation", example: "テストの準備をしています。", deck: "Vocabulary" },
+  { id: 7, front: "理解", reading: "りかい", back: "understanding", example: "先生の説明を理解しました。", deck: "Vocabulary" },
+  { id: 8, front: "興味", reading: "きょうみ", back: "interest", example: "日本の文化に興味があります。", deck: "Vocabulary" },
+  { id: 9, front: "目的", reading: "もくてき", back: "purpose, goal", example: "日本へ行く目的は何ですか。", deck: "Vocabulary" },
+  { id: 10, front: "約束", reading: "やくそく", back: "promise, appointment", example: "友達と約束があります。", deck: "Vocabulary" },
+  
+  { id: 11, front: "〜ながら", reading: "〜ながら", back: "while ~ing", example: "音楽を聞きながら勉強します。", deck: "Grammar" },
+  { id: 12, front: "〜ために", reading: "〜ために", back: "in order to, for the sake of", example: "健康のために野菜を食べます。", deck: "Grammar" },
+  { id: 13, front: "〜ように", reading: "〜ように", back: "so that, in such a way that", example: "忘れないようにメモをします。", deck: "Grammar" },
+  { id: 14, front: "〜たら", reading: "〜たら", back: "if, when, after", example: "雨が降ったら、行きません。", deck: "Grammar" },
+  { id: 15, front: "〜ば", reading: "〜ば", back: "if (conditional)", example: "安ければ、買います。", deck: "Grammar" },
+
+  { id: 16, front: "学", reading: "ガク / まな(ぶ)", back: "study, learning", example: "学校 (がっこう) - school", deck: "Kanji" },
+  { id: 17, front: "読", reading: "ドク / よ(む)", back: "read", example: "読書 (どくしょ) - reading", deck: "Kanji" },
+  { id: 18, front: "書", reading: "ショ / か(く)", back: "write", example: "辞書 (じしょ) - dictionary", deck: "Kanji" },
+  { id: 19, front: "聞", reading: "ブン / き(く)", back: "hear, ask", example: "新聞 (しんぶん) - newspaper", deck: "Kanji" },
+  { id: 20, front: "話", reading: "ワ / はな(す)", back: "speak, talk", example: "会話 (かいわ) - conversation", deck: "Kanji" },
 ]
 
 export const reviewQueue = { due: 24, new: 8, learning: 12 }
@@ -193,10 +214,12 @@ export const examQuestions = Array.from({ length: 20 }, (_, i) => ({
 }))
 
 export const chatSuggestions = [
-  "Explain the difference between は and が",
-  "Break down the kanji 影響",
-  "Give me 5 example sentences with ながら",
-  "Quiz me on N4 grammar",
+  "Jelaskan perbedaan antara は dan が",
+  "Uraikan kanji 影響 secara detail",
+  "Berikan 5 contoh kalimat dengan ながら",
+  "Uji pemahamanku tentang tata bahasa N4",
+  "Apa perbedaan て-form dan た-form?",
+  "Bantu saya memahami partikel に vs で",
 ]
 
 export const sampleChat = [
@@ -205,34 +228,27 @@ export const sampleChat = [
     content:
       "こんにちは, Aiko! I'm your KotobaLab tutor. Ask me anything about grammar, vocabulary, kanji, or reading — I'll explain it simply with examples.",
   },
-  {
-    role: "user" as const,
-    content: "What's the difference between は and が?",
-  },
-  {
-    role: "assistant" as const,
-    content:
-      "Great question! In short:\n\n• は (wa) marks the **topic** — what the sentence is about. It often implies contrast or shared knowledge.\n• が (ga) marks the **subject** — it introduces new information or emphasizes who/what does something.\n\nExample:\n猫は魚が好きです。 — 'As for cats, they like fish.' は sets the topic (cats), が marks what they like (fish).",
-  },
 ]
 
 export const planner = [
-  { id: 1, day: "Monday", tasks: [{ t: "N4 Grammar lesson", done: true }, { t: "20 flashcards", done: true }] },
-  { id: 2, day: "Tuesday", tasks: [{ t: "Reading practice", done: true }, { t: "Kanji set 4", done: false }] },
-  { id: 3, day: "Wednesday", tasks: [{ t: "Mock listening test", done: false }, { t: "Vocabulary review", done: false }] },
-  { id: 4, day: "Thursday", tasks: [{ t: "AI Tutor — particles", done: false }] },
-  { id: 5, day: "Friday", tasks: [{ t: "TOEFL reading drill", done: false }, { t: "Weekly review", done: false }] },
+  { id: 1, day: "Monday", tasks: [{ t: "N4 Grammar lesson", done: true, category: "grammar", timeMinutes: 30 }, { t: "20 flashcards", done: true, category: "review", timeMinutes: 15 }] },
+  { id: 2, day: "Tuesday", tasks: [{ t: "Reading practice", done: true, category: "reading", timeMinutes: 45 }, { t: "Kanji set 4", done: false, category: "kanji", timeMinutes: 20 }] },
+  { id: 3, day: "Wednesday", tasks: [{ t: "Mock listening test", done: false, category: "listening", timeMinutes: 40 }, { t: "Vocabulary review", done: false, category: "vocabulary", timeMinutes: 20 }] },
+  { id: 4, day: "Thursday", tasks: [{ t: "AI Tutor — particles", done: false, category: "grammar", timeMinutes: 30 }, { t: "Kanji Writing practice", done: false, category: "kanji", timeMinutes: 15 }] },
+  { id: 5, day: "Friday", tasks: [{ t: "TOEFL reading drill", done: false, category: "reading", timeMinutes: 60 }, { t: "Weekly review", done: false, category: "review", timeMinutes: 30 }] },
+  { id: 6, day: "Saturday", tasks: [{ t: "Mock Exam Section 1", done: false, category: "exam", timeMinutes: 60 }] },
+  { id: 7, day: "Sunday", tasks: [{ t: "Rest & Light Flashcards", done: false, category: "review", timeMinutes: 15 }] },
 ]
 
 export const achievements = [
-  { id: 1, title: "First Steps", description: "Complete your first lesson", icon: "Sparkles", unlocked: true, progress: 100 },
-  { id: 2, title: "Week Warrior", description: "7-day study streak", icon: "Flame", unlocked: true, progress: 100 },
-  { id: 3, title: "Vocabulary Master", description: "Master 500 words", icon: "BookOpen", unlocked: true, progress: 100 },
-  { id: 4, title: "Kanji Climber", description: "Learn 200 kanji", icon: "Mountain", unlocked: false, progress: 64 },
-  { id: 5, title: "Perfect Score", description: "100% on a mock exam", icon: "Trophy", unlocked: false, progress: 88 },
-  { id: 6, title: "Marathon", description: "30-day study streak", icon: "Calendar", unlocked: false, progress: 90 },
-  { id: 7, title: "Night Owl", description: "Study after midnight 10 times", icon: "Moon", unlocked: true, progress: 100 },
-  { id: 8, title: "Polyglot Path", description: "Reach N2 readiness", icon: "Languages", unlocked: false, progress: 8 },
+  { id: 1, title: "First Steps", description: "Complete your first lesson", icon: "Sparkles", unlocked: true, progress: 100, xpReward: 50 },
+  { id: 2, title: "Week Warrior", description: "7-day study streak", icon: "Flame", unlocked: true, progress: 100, xpReward: 100 },
+  { id: 3, title: "Vocabulary Master", description: "Master 500 words", icon: "BookOpen", unlocked: true, progress: 100, xpReward: 250 },
+  { id: 4, title: "Kanji Climber", description: "Learn 200 kanji", icon: "Mountain", unlocked: false, progress: 64, xpReward: 300 },
+  { id: 5, title: "Perfect Score", description: "100% on a mock exam", icon: "Trophy", unlocked: false, progress: 88, xpReward: 500 },
+  { id: 6, title: "Marathon", description: "30-day study streak", icon: "Calendar", unlocked: false, progress: 90, xpReward: 400 },
+  { id: 7, title: "Night Owl", description: "Study after midnight 10 times", icon: "Moon", unlocked: true, progress: 100, xpReward: 150 },
+  { id: 8, title: "Polyglot Path", description: "Reach N2 readiness", icon: "Languages", unlocked: false, progress: 8, xpReward: 1000 },
 ]
 
 export const bookmarks = [
@@ -243,7 +259,6 @@ export const bookmarks = [
   { id: 5, type: "Reading", title: "Inference passage — climate", level: "N3", note: "Practice main-idea questions" },
 ]
 
-// 17 weeks x 7 days heatmap intensity
 export const heatmap: number[][] = Array.from({ length: 17 }, (_, w) =>
   Array.from({ length: 7 }, (_, d) => {
     const seed = (w * 7 + d) * 53

@@ -74,7 +74,7 @@ export function LandingFeatures() {
       </div>
 
       <div className="mt-10 flex justify-center">
-        <Button variant="outline" size="lg" className="h-11 px-5" render={
+        <Button variant="outline" size="lg" className="h-11 px-5" nativeButton={false} render={
           <Link href="/register">
             Try it free
             <ArrowRight data-icon="inline-end" />
