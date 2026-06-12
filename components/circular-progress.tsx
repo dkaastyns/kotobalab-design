@@ -2,26 +2,30 @@ import { cn } from "@/lib/utils"
 
 export function CircularProgress({
   value,
+  max = 100,
   size = 120,
   strokeWidth = 10,
   label,
-  sublabel,
+  display,
   className,
   trackClassName,
   barClassName,
 }: {
   value: number
+  max?: number
   size?: number
   strokeWidth?: number
   label?: string
-  sublabel?: string
+  display?: string
   className?: string
   trackClassName?: string
   barClassName?: string
 }) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
-  const offset = circumference - (value / 100) * circumference
+  const pct = Math.min(100, (value / max) * 100)
+  const offset = circumference - (pct / 100) * circumference
+  const center = display ?? `${Math.round(pct)}%`
 
   return (
     <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
@@ -47,8 +51,8 @@ export function CircularProgress({
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        {label && <span className="text-2xl font-bold tracking-tight">{label}</span>}
-        {sublabel && <span className="text-xs text-muted-foreground">{sublabel}</span>}
+        <span className="text-2xl font-bold tracking-tight">{center}</span>
+        {label && <span className="text-xs text-muted-foreground">{label}</span>}
       </div>
     </div>
   )

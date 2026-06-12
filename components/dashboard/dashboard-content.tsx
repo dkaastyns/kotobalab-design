@@ -191,7 +191,7 @@ export function DashboardContent() {
             <CardTitle className="text-lg">JLPT readiness</CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-center py-4">
-            <CircularProgress value={jlptReadiness.percent} label={`${jlptReadiness.percent}%`} sublabel={jlptReadiness.level} />
+            <CircularProgress value={jlptReadiness.percent} label={jlptReadiness.level} />
           </CardContent>
         </Card>
 
@@ -202,8 +202,9 @@ export function DashboardContent() {
           <CardContent className="flex items-center justify-center py-4">
             <CircularProgress
               value={toeflReadiness.score}
-              label={`${toeflReadiness.score}`}
-              sublabel="projected"
+              max={120}
+              display={`${toeflReadiness.score}`}
+              label="projected"
               barClassName="stroke-[oklch(0.5_0.09_155)]"
             />
           </CardContent>
