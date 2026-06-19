@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { CircularProgress } from "@/components/circular-progress"
+import { AnimatedCounter } from "@/components/shared/animated-counter"
+import { MagneticButton } from "@/components/shared/magnetic-button"
 
 const mockWeakAreas = [
   { area: "Kanji Readings (N3)", accuracy: 52 },
@@ -64,7 +66,9 @@ export default function AnalyticsInfoPage() {
                   <div key={w.area} className="flex flex-col gap-1.5">
                     <div className="flex items-center justify-between text-sm">
                       <span className="font-semibold text-foreground">{w.area}</span>
-                      <span className="text-xs text-muted-foreground font-mono">{w.accuracy}% accuracy</span>
+                      <span className="text-xs text-muted-foreground font-mono">
+                        <AnimatedCounter value={w.accuracy} />% accuracy
+                      </span>
                     </div>
                     <Progress
                       value={w.accuracy}
@@ -95,17 +99,19 @@ export default function AnalyticsInfoPage() {
           </div>
 
           <div className="mt-16 text-center">
-            <Button
-              size="lg"
-              className="h-12 px-6 text-base font-semibold"
-              nativeButton={false}
-              render={
-                <Link href="/register">
-                  Start tracking your progress
-                  <ArrowRight data-icon="inline-end" />
-                </Link>
-              }
-            />
+            <MagneticButton>
+              <Button
+                size="lg"
+                className="h-12 px-6 text-base font-semibold transition-transform hover:scale-[1.02]"
+                nativeButton={false}
+                render={
+                  <Link href="/register">
+                    Start tracking your progress
+                    <ArrowRight data-icon="inline-end" />
+                  </Link>
+                }
+              />
+            </MagneticButton>
           </div>
         </main>
       </div>

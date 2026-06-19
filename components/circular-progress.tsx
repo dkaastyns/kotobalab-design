@@ -1,4 +1,8 @@
+"use client"
+
 import { cn } from "@/lib/utils"
+import { motion, useInView } from "framer-motion"
+import { useRef } from "react"
 
 export function CircularProgress({
   value,
@@ -21,6 +25,9 @@ export function CircularProgress({
   trackClassName?: string
   barClassName?: string
 }) {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.5 })
+
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius
   const pct = Math.min(100, (value / max) * 100)
@@ -28,7 +35,7 @@ export function CircularProgress({
   const center = display ?? `${Math.round(pct)}%`
 
   return (
-    <div className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
+    <div ref={ref} className={cn("relative inline-flex items-center justify-center", className)} style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
         <circle
           cx={size / 2}
@@ -38,7 +45,7 @@ export function CircularProgress({
           fill="none"
           className={cn("stroke-muted", trackClassName)}
         />
-        <circle
+        <motion.circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
@@ -46,8 +53,10 @@ export function CircularProgress({
           fill="none"
           strokeLinecap="round"
           strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          className={cn("stroke-primary transition-all duration-700 ease-out", barClassName)}
+          initial={{ strokeDashoffset: circumference }}
+          animate={{ strokeDashoffset: inView ? offset : circumference }}
+          transition={{ duration: 1.5, ease: [0.25, 1, 0.5, 1] }}
+          className={cn("stroke-primary", barClassName)}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
