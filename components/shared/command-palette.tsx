@@ -78,14 +78,12 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const flatFiltered = Object.values(groupedCommands).flat()
 
   useEffect(() => {
-    setActiveIndex(0)
-  }, [query])
-
-  useEffect(() => {
     if (open) {
-      setTimeout(() => inputRef.current?.focus(), 50)
-      setQuery("")
-      setActiveIndex(0)
+      setTimeout(() => {
+        inputRef.current?.focus()
+        setQuery("")
+        setActiveIndex(0)
+      }, 50)
     }
   }, [open])
 
@@ -145,7 +143,10 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
                 <input
                   ref={inputRef}
                   value={query}
-                  onChange={e => setQuery(e.target.value)}
+                  onChange={e => {
+                    setQuery(e.target.value)
+                    setActiveIndex(0)
+                  }}
                   placeholder="Search pages, actions, topics…"
                   className="flex-1 bg-transparent text-sm text-foreground placeholder:text-muted-foreground outline-none"
                 />

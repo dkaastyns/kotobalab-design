@@ -69,17 +69,20 @@ export function useCurrentUser() {
   const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true)
-    const stored = localStorage.getItem("user")
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored)
-        // Merge with defaults to ensure any new fields exist
-        setCurrentUser({ ...defaultUser, ...parsed })
-      } catch (e) {
-        console.error("Failed to parse stored user", e)
+    const timer = setTimeout(() => {
+      setIsMounted(true)
+      const stored = localStorage.getItem("user")
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored)
+          // Merge with defaults to ensure any new fields exist
+          setCurrentUser({ ...defaultUser, ...parsed })
+        } catch (e) {
+          console.error("Failed to parse stored user", e)
+        }
       }
-    }
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   // Apply dark mode to <html> whenever preference changes

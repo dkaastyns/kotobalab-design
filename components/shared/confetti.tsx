@@ -12,6 +12,7 @@ interface Particle {
   rotation: number
   duration: number
   delay: number
+  borderRadius: string
 }
 
 const COLORS = [
@@ -39,6 +40,9 @@ export function Confetti() {
       const duration = 1.8 + Math.random() * 1.5
       const delay = Math.random() * 0.15
 
+      const shapeRand = Math.random()
+      const borderRadius = shapeRand > 0.45 ? "50%" : shapeRand > 0.15 ? "2px" : "0px"
+
       return {
         id: idx,
         x,
@@ -48,9 +52,15 @@ export function Confetti() {
         rotation,
         duration,
         delay,
+        borderRadius,
       }
     })
-    setParticles(generated)
+
+    const timer = setTimeout(() => {
+      setParticles(generated)
+    }, 0)
+
+    return () => clearTimeout(timer)
   }, [])
 
   return (
@@ -76,7 +86,7 @@ export function Confetti() {
             width: p.size,
             height: p.size,
             backgroundColor: p.color,
-            borderRadius: Math.random() > 0.45 ? "50%" : Math.random() > 0.5 ? "2px" : "0px", // mix of circles, rounded chips, squares
+            borderRadius: p.borderRadius,
           }}
         />
       ))}
