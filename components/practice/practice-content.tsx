@@ -36,7 +36,7 @@ export function PracticeContent() {
   const totalCount = parseInt(searchParams.get("count") || "5", 10)
   const useTimer = searchParams.get("timer") === "true"
 
-  const { incrementStreak, addNotification } = useCurrentUser()
+  const { incrementStreak, addNotification, addXP, recordCorrectAnswer, completeSession } = useCurrentUser()
   const [q, setQ] = useState<PracticeQuestion | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -45,7 +45,7 @@ export function PracticeContent() {
   const [submitted, setSubmitted] = useState(false)
   const [bookmarked, setBookmarked] = useState(false)
   const [number, setNumber] = useState(1)
-  const [timeLeft, setTimeLeft] = useState(totalCount * 60)
+  const [timeLeft, setTimeLeft] = useState(30) // 30 seconds per question
   const [combo, setCombo] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [sessionDone, setSessionDone] = useState(false)
@@ -63,11 +63,12 @@ export function PracticeContent() {
       setCombo(c => c + 1)
       setCorrectCount(c => c + 1)
       incrementStreak()
-      addNotification("Streak Tersimpan! 🔥", "Kamu menjawab benar dan menjaga streak harianmu.")
+      recordCorrectAnswer()
+      addXP(15)
     } else {
       setCombo(0)
     }
-  }, [q, selected, incrementStreak, addNotification])
+  }, [q, selected, incrementStreak, recordCorrectAnswer, addXP])
 
   useEffect(() => {
     if (!useTimer || isLoading || submitted) return;
@@ -82,7 +83,8 @@ export function PracticeContent() {
       })
     }, 1000)
     return () => clearInterval(interval)
-  }, [useTimer, isLoading, submitted, handleCheck])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [useTimer, isLoading, submitted])
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)
@@ -96,17 +98,18 @@ export function PracticeContent() {
     setSubmitted(false)
     setSelected(null)
     setBookmarked(false)
+    setTimeLeft(30) // Reset timer for each new question
     try {
       const res = await fetch("/api/ai/generate-practice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ level: topic })
+        body: JSON.stringify({ level: topic, category: searchParams.get("category") || undefined })
       })
       if (!res.ok) throw new Error("Failed to generate question")
       const data = await res.json()
       setQ(data)
-    } catch (err: any) {
-      setError(err.message || "An error occurred")
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred")
     } finally {
       setIsLoading(false)
     }
@@ -123,6 +126,7 @@ export function PracticeContent() {
   const handleNext = () => {
     if (number >= totalCount) {
       setSessionDone(true)
+      completeSession()
       addNotification("Sesi Selesai! 🎉", `Kamu menyelesaikan ${totalCount} soal. Luar biasa!`)
       return
     }
@@ -132,7 +136,7 @@ export function PracticeContent() {
 
   if (sessionDone) {
     const accuracy = Math.round((correctCount / totalCount) * 100)
-    const xpEarned = correctCount * 15
+    const xpEarned = correctCount * 15 + (accuracy === 100 ? 50 : 0) // bonus XP for perfect
     return (
       <motion.div
         variants={staggerContainer}
@@ -231,7 +235,7 @@ export function PracticeContent() {
           </div>
           <span className="text-sm font-semibold text-muted-foreground flex items-center gap-4">
             {useTimer && (
-              <span className={cn("flex items-center gap-1.5", timeLeft < 60 ? "text-destructive" : "text-amber-500")}>
+              <span className={cn("flex items-center gap-1.5", timeLeft <= 10 ? "text-destructive animate-pulse" : timeLeft <= 20 ? "text-amber-500" : "text-muted-foreground")}>
                 <Timer className="size-4" />
                 {formatTime(timeLeft)}
               </span>

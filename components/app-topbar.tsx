@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -22,9 +22,10 @@ import {
   Settings,
   Sparkles,
   LogOut,
+  Moon,
+  Sun,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
@@ -37,6 +38,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
+import { CommandPalette } from "@/components/shared/command-palette"
 
 const allNav = [
   { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -56,10 +58,25 @@ const allNav = [
 export function AppTopbar({ title }: { title: string }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
-  const { user, markNotificationsAsRead, clearNotifications } = useCurrentUser()
+  const [paletteOpen, setPaletteOpen] = useState(false)
+  const { user, markNotificationsAsRead, clearNotifications, toggleDarkMode } = useCurrentUser()
+
+  // Global Ctrl+K shortcut
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault()
+        setPaletteOpen(prev => !prev)
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md md:px-6">
+    <>
+      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur-md md:px-6">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger
           render={
@@ -134,14 +151,17 @@ export function AppTopbar({ title }: { title: string }) {
       <h1 className="text-lg font-semibold tracking-tight md:text-xl">{title}</h1>
 
       <div className="ml-auto flex items-center gap-2 md:gap-3">
-        <div className="relative hidden sm:block">
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search lessons, words…"
-            className="h-10 w-44 rounded-xl pl-9 md:w-64"
-            aria-label="Search"
-          />
-        </div>
+        {/* Search trigger — opens Command Palette */}
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="hidden sm:flex items-center gap-2 h-10 w-44 md:w-64 rounded-xl border border-border bg-muted/50 px-3 text-sm text-muted-foreground hover:bg-muted transition-colors"
+        >
+          <Search className="size-4 shrink-0" />
+          <span className="flex-1 text-left">Search…</span>
+          <kbd className="hidden md:flex items-center gap-1 text-[10px] font-mono bg-background px-1.5 py-0.5 rounded border border-border">
+            Ctrl K
+          </kbd>
+        </button>
 
         <DropdownMenu>
           <DropdownMenuTrigger
@@ -163,11 +183,15 @@ export function AppTopbar({ title }: { title: string }) {
               </span>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Current Streak</span>
-                <span className="font-mono font-medium">{user.streakDays || 0}</span>
+                <span className="font-mono font-medium">{user.streakDays || 0} days</span>
               </div>
               <div className="flex justify-between items-center text-sm">
                 <span className="text-muted-foreground">Best Streak</span>
-                <span className="font-mono font-medium">{user.bestStreak || 0}</span>
+                <span className="font-mono font-medium">{user.bestStreak || 0} days</span>
+              </div>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-muted-foreground">Total XP</span>
+                <span className="font-mono font-medium text-primary">{(user.xp || 0).toLocaleString()}</span>
               </div>
             </div>
           </DropdownMenuContent>
@@ -230,7 +254,20 @@ export function AppTopbar({ title }: { title: string }) {
             </div>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Dark mode quick toggle */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-10 rounded-xl hidden sm:flex"
+          onClick={toggleDarkMode}
+          aria-label="Toggle dark mode"
+          title={user.darkMode ? "Switch to light mode" : "Switch to dark mode"}
+        >
+          {user.darkMode ? <Sun className="size-5" /> : <Moon className="size-5" />}
+        </Button>
       </div>
     </header>
+    </>
   )
 }

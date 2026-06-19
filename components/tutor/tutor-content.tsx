@@ -1,13 +1,14 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Send, Sparkles, Bot, User, Trash2, Cpu, AlertCircle, RefreshCw } from "lucide-react"
+import { Send, Sparkles, Bot, User, Trash2, Cpu, AlertCircle, RefreshCw, Copy, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { chatSuggestions } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
+import { useCurrentUser } from "@/hooks/use-user"
+import { toast } from "sonner"
 
 interface Message {
   role: "assistant" | "user"
@@ -20,6 +21,92 @@ const WELCOME_MESSAGE: Message = {
     "こんにちは! Saya KotobaLab AI Tutor — didukung oleh model bahasa canggih untuk memberikan penjelasan mendalam dan komprehensif dalam Bahasa Indonesia.\n\nTanya saya tentang:\n- Pola tata bahasa (mis. 'Jelaskan ながら')\n- Kosakata (mis. 'Uraikan kata 影響')\n- Kanji (mis. 'Analisis kanji 験')\n- Partikel (mis. 'Perbedaan は vs が')\n- Tips persiapan JLPT\n\nSaya akan memberikan contoh kalimat, konteks budaya, dan trik mengingat untuk membantumu!",
 }
 
+/** Simple markdown → JSX renderer (no extra library needed) */
+function MarkdownMessage({ content }: { content: string }) {
+  const lines = content.split("\n")
+
+  return (
+    <div className="flex flex-col gap-1.5 text-sm leading-relaxed">
+      {lines.map((line, idx) => {
+        // ## Heading
+        if (line.startsWith("## ")) {
+          return (
+            <p key={idx} className="font-bold text-foreground text-base mt-2 first:mt-0">
+              {line.slice(3)}
+            </p>
+          )
+        }
+        // # Heading
+        if (line.startsWith("# ")) {
+          return (
+            <p key={idx} className="font-bold text-foreground text-lg mt-2 first:mt-0">
+              {line.slice(2)}
+            </p>
+          )
+        }
+        // Bullet list
+        if (line.startsWith("- ") || line.startsWith("• ")) {
+          return (
+            <div key={idx} className="flex gap-2">
+              <span className="text-primary shrink-0 mt-0.5">•</span>
+              <span>{line.slice(2)}</span>
+            </div>
+          )
+        }
+        // Numbered list
+        const numberedMatch = line.match(/^(\d+)\.\s(.+)/)
+        if (numberedMatch) {
+          return (
+            <div key={idx} className="flex gap-2">
+              <span className="text-primary font-mono text-xs shrink-0 mt-0.5 w-5">{numberedMatch[1]}.</span>
+              <span>{numberedMatch[2]}</span>
+            </div>
+          )
+        }
+        // Empty line = spacing
+        if (line.trim() === "") {
+          return <div key={idx} className="h-1" />
+        }
+        // Bold: **text** → render as strong (avoid ** showing in UI)
+        const hasBold = /\*\*(.+?)\*\*/.test(line)
+        if (hasBold) {
+          const parts = line.split(/\*\*(.+?)\*\*/)
+          return (
+            <p key={idx}>
+              {parts.map((part, i) =>
+                i % 2 === 1 ? <strong key={i} className="font-semibold text-foreground">{part}</strong> : part
+              )}
+            </p>
+          )
+        }
+        // Regular text — highlight Japanese inline (detect CJK chars)
+        return <p key={idx}>{line}</p>
+      })}
+    </div>
+  )
+}
+
+function CopyButton({ content }: { content: string }) {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(content)
+    setCopied(true)
+    toast.success("Copied to clipboard!")
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <button
+      onClick={handleCopy}
+      className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-muted/60"
+      title="Copy message"
+    >
+      {copied ? <Check className="size-3.5 text-success" /> : <Copy className="size-3.5" />}
+    </button>
+  )
+}
+
 export function TutorContent() {
   const [messages, setMessages] = useState<Message[]>([WELCOME_MESSAGE])
   const [inputValue, setInputValue] = useState("")
@@ -28,6 +115,7 @@ export function TutorContent() {
   const [error, setError] = useState<string | null>(null)
   const [lastFailedMessage, setLastFailedMessage] = useState<string | null>(null)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const { recordAISession } = useCurrentUser()
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -45,9 +133,8 @@ export function TutorContent() {
     setLastFailedMessage(null)
 
     try {
-      // Send conversation history (exclude the welcome message for API, but keep user/assistant pairs)
       const conversationHistory = updatedMessages
-        .filter((_, idx) => idx > 0) // skip welcome message
+        .filter((_, idx) => idx > 0)
         .map((m) => ({ role: m.role, content: m.content }))
 
       const res = await fetch("/api/ai/tutor", {
@@ -69,16 +156,19 @@ export function TutorContent() {
       ])
 
       if (data.model) {
-        // Extract a readable model name
         const modelName = data.model.split("/").pop()?.split(":")[0] || data.model
         setCurrentModel(modelName)
+      }
+
+      // Record AI session on first real exchange
+      if (updatedMessages.length === 2) {
+        recordAISession()
       }
     } catch (err: unknown) {
       console.error("[Tutor Error]", err)
       const errorMessage = err instanceof Error ? err.message : "Failed to get response"
       setError(errorMessage)
       setLastFailedMessage(text)
-      // Remove the user message that failed so they can retry
       setMessages((prev) => prev.slice(0, -1))
     } finally {
       setIsTyping(false)
@@ -169,7 +259,7 @@ export function TutorContent() {
             return (
               <div
                 key={idx}
-                className={cn("flex w-full gap-3", isAsst ? "justify-start" : "justify-end")}
+                className={cn("flex w-full gap-3 group", isAsst ? "justify-start" : "justify-end")}
               >
                 {isAsst && (
                   <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary mt-1">
@@ -178,13 +268,23 @@ export function TutorContent() {
                 )}
                 <div
                   className={cn(
-                    "max-w-[85%] rounded-2xl p-4 text-sm leading-relaxed whitespace-pre-wrap shadow-soft",
+                    "relative max-w-[85%] rounded-2xl p-4 shadow-soft",
                     isAsst
                       ? "bg-card border border-primary/10 text-foreground"
-                      : "bg-primary text-primary-foreground font-medium"
+                      : "bg-primary text-primary-foreground font-medium text-sm"
                   )}
                 >
-                  {msg.content}
+                  {isAsst ? (
+                    <MarkdownMessage content={msg.content} />
+                  ) : (
+                    <p className="text-sm leading-relaxed">{msg.content}</p>
+                  )}
+                  {/* Copy button for assistant messages */}
+                  {isAsst && (
+                    <div className="flex justify-end mt-2">
+                      <CopyButton content={msg.content} />
+                    </div>
+                  )}
                 </div>
                 {!isAsst && (
                   <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-secondary text-secondary-foreground mt-1">
@@ -241,11 +341,11 @@ export function TutorContent() {
             }}
             className="flex gap-2"
           >
-            <Input
+            <input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask me a question (e.g. 'Explainながら')"
-              className="flex-1 rounded-xl h-11 border-border/80 focus-visible:ring-primary focus-visible:border-primary bg-background/50"
+              placeholder="Tanya sesuatu… (mis. 'Jelaskan ながら')"
+              className="flex-1 rounded-xl h-11 border border-border/80 focus:ring-2 focus:ring-primary/30 focus:border-primary bg-background/50 px-4 text-sm outline-none transition-all disabled:opacity-50"
               disabled={isTyping}
             />
             <Button type="submit" size="icon" className="h-11 w-11 rounded-xl" disabled={!inputValue.trim() || isTyping}>

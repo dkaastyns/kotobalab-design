@@ -211,7 +211,7 @@ export function FlashcardsContent() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground uppercase font-semibold">Again / Due</p>
-                <p className="text-lg font-bold">{reviewQueue.due - stats.again} remaining</p>
+                <p className="text-lg font-bold">{Math.max(0, reviewQueue.due - stats.again)} remaining</p>
               </div>
             </CardContent>
           </Card>

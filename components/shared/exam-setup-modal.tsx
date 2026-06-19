@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Settings, Timer, BookOpen, Target, Play, Zap } from "lucide-react"
+import { Settings, Timer, BookOpen, Target, Play, Zap, Tag } from "lucide-react"
 
 import {
   Dialog,
@@ -33,8 +33,16 @@ export function ExamSetupModal({ children, defaultTopic = "N5", defaultMode = "p
   const [mode, setMode] = useState<"practice" | "exam">(defaultMode)
   const [questionCount, setQuestionCount] = useState<number>(5)
   const [useTimer, setUseTimer] = useState<boolean>(defaultMode === "exam")
+  const [category, setCategory] = useState<string>("All")
 
   const counts = [3, 5, 10, 20]
+  const categories = [
+    { id: "All", label: "Mixed" },
+    { id: "Grammar", label: "Grammar" },
+    { id: "Vocabulary", label: "Vocabulary" },
+    { id: "Kanji", label: "Kanji" },
+    { id: "Reading", label: "Reading" },
+  ]
   const topics = [
     { id: "N5", label: "N5 Beginner" },
     { id: "N4", label: "N4 Elementary" },
@@ -52,6 +60,9 @@ export function ExamSetupModal({ children, defaultTopic = "N5", defaultMode = "p
       timer: useTimer.toString(),
       mode,
     })
+    if (category && category !== "All") {
+      params.set("category", category)
+    }
     
     router.push(`/${mode === "exam" ? "exam" : "practice"}?${params.toString()}`)
   }
@@ -101,6 +112,25 @@ export function ExamSetupModal({ children, defaultTopic = "N5", defaultMode = "p
                 <Target className="size-5" />
                 <span className="text-sm font-semibold">Mock Exam</span>
               </button>
+            </div>
+          </div>
+
+          {/* Category Selection */}
+          <div className="flex flex-col gap-3">
+            <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">
+              <Tag className="size-3 inline mr-1" />Category Focus
+            </Label>
+            <div className="flex flex-wrap gap-2">
+              {categories.map(c => (
+                <Badge
+                  key={c.id}
+                  variant={category === c.id ? "default" : "secondary"}
+                  className={cn("cursor-pointer py-1.5 px-3 transition-colors", category !== c.id && "hover:bg-primary/20")}
+                  onClick={() => setCategory(c.id)}
+                >
+                  {c.label}
+                </Badge>
+              ))}
             </div>
           </div>
 

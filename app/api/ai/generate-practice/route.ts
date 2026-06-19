@@ -32,11 +32,26 @@ Make sure the question tests real proficiency. Ensure all fields are filled.
 
 export async function POST(req: Request) {
   try {
-    const { level = "N4", weakAreas = [] } = await req.json();
+    const { level = "N4", weakAreas = [], category } = await req.json();
 
-    let userPrompt = `Please generate a ${level} practice question.`;
+    let userPrompt = `Please generate a ${level} practice question`;
+    if (category && category !== "All") {
+      userPrompt += ` focused on ${category}`;
+    }
+    userPrompt += ".";
     if (weakAreas && weakAreas.length > 0) {
       userPrompt += ` Focus on these weak areas if possible: ${weakAreas.join(", ")}.`;
+    }
+    if (category) {
+      const categoryMap: Record<string, string> = {
+        Grammar: "grammar patterns and sentence structures",
+        Vocabulary: "vocabulary words and their meanings",
+        Kanji: "kanji readings, meanings, and compounds",
+        Reading: "reading comprehension with a short passage",
+      }
+      if (categoryMap[category]) {
+        userPrompt += ` The question MUST specifically test: ${categoryMap[category]}.`
+      }
     }
 
     const completion = await createChatCompletion({

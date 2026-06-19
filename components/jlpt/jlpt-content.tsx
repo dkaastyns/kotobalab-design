@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { BookOpen, PenLine, Headphones, ScrollText, ArrowRight, Lock, CheckCircle2, Trophy } from "lucide-react"
+import { BookOpen, PenLine, Languages, ScrollText, ArrowRight, Lock, CheckCircle2, Trophy } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -14,7 +14,7 @@ const sectionIcons = [
   { key: "vocabulary", name: "Vocabulary", icon: BookOpen },
   { key: "grammar", name: "Grammar", icon: PenLine },
   { key: "reading", name: "Reading", icon: ScrollText },
-  { key: "kanji", name: "Kanji", icon: Headphones },
+  { key: "kanji", name: "Kanji", icon: Languages },
 ] as const
 
 export function JlptContent() {
