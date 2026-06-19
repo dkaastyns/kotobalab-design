@@ -2,6 +2,7 @@ import { Sparkles } from "lucide-react"
 import { LandingNav } from "@/components/landing/landing-nav"
 import { LandingFooter } from "@/components/landing/landing-footer"
 import { LandingFeatures } from "@/components/landing/landing-features"
+import { ScrollFadeUp } from "@/components/shared/scroll-fade-up"
 
 export default function FeaturesPage() {
   return (
@@ -21,7 +22,10 @@ export default function FeaturesPage() {
               Discover how our laboratory tools simplify Japanese and English exam preparation.
             </p>
           </div>
-          <LandingFeatures />
+          
+          <ScrollFadeUp>
+            <LandingFeatures />
+          </ScrollFadeUp>
         </main>
       </div>
       <LandingFooter />

@@ -6,6 +6,7 @@ import { LandingHighlights } from "@/components/landing/landing-highlights"
 import { LandingTestimonials } from "@/components/landing/landing-testimonials"
 import { LandingFaq } from "@/components/landing/landing-faq"
 import { LandingFooter } from "@/components/landing/landing-footer"
+import { ScrollFadeUp } from "@/components/shared/scroll-fade-up"
 
 export default function HomePage() {
   return (
@@ -13,11 +14,26 @@ export default function HomePage() {
       <LandingNav />
       <main>
         <LandingHero />
-        <LandingFeatures />
-        <LandingAiTutor />
-        <LandingHighlights />
-        <LandingTestimonials />
-        <LandingFaq />
+        
+        <ScrollFadeUp>
+          <LandingFeatures />
+        </ScrollFadeUp>
+        
+        <ScrollFadeUp>
+          <LandingAiTutor />
+        </ScrollFadeUp>
+        
+        <ScrollFadeUp>
+          <LandingHighlights />
+        </ScrollFadeUp>
+        
+        <ScrollFadeUp>
+          <LandingTestimonials />
+        </ScrollFadeUp>
+        
+        <ScrollFadeUp>
+          <LandingFaq />
+        </ScrollFadeUp>
       </main>
       <LandingFooter />
     </div>

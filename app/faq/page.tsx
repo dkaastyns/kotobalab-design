@@ -2,6 +2,7 @@ import { Sparkles } from "lucide-react"
 import { LandingNav } from "@/components/landing/landing-nav"
 import { LandingFooter } from "@/components/landing/landing-footer"
 import { LandingFaq } from "@/components/landing/landing-faq"
+import { ScrollFadeUp } from "@/components/shared/scroll-fade-up"
 
 export default function FaqPage() {
   return (
@@ -21,7 +22,10 @@ export default function FaqPage() {
               Find quick answers to billing queries, AI tutor limits, and mobile compatibility.
             </p>
           </div>
-          <LandingFaq />
+          
+          <ScrollFadeUp>
+            <LandingFaq />
+          </ScrollFadeUp>
         </main>
       </div>
       <LandingFooter />

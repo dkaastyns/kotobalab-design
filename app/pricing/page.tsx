@@ -3,6 +3,7 @@ import { Check, Sparkles } from "lucide-react"
 import { LandingNav } from "@/components/landing/landing-nav"
 import { LandingFooter } from "@/components/landing/landing-footer"
 import { Button } from "@/components/ui/button"
+import { ScrollFadeUp } from "@/components/shared/scroll-fade-up"
 
 const tiers = [
   {
@@ -58,61 +59,63 @@ export default function PricingPage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-16 grid max-w-sm gap-8 sm:max-w-none md:grid-cols-2 lg:max-w-4xl">
-            {tiers.map((tier) => (
-              <div
-                key={tier.name}
-                className={`flex flex-col justify-between rounded-3xl p-8 border transition-all duration-300 ${
-                  tier.featured
-                    ? "border-primary bg-gradient-to-b from-card to-primary/5 shadow-soft-lg scale-102"
-                    : "border-border bg-card shadow-soft hover:border-primary/25 hover:shadow-soft-lg"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="text-xl font-bold font-display text-foreground">{tier.name}</h3>
-                    {tier.featured && (
-                      <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold tracking-wide text-primary">
-                        Recommended
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-4 text-sm text-muted-foreground/80 leading-relaxed">
-                    {tier.description}
-                  </p>
-                  <div className="mt-6 flex items-baseline gap-1">
-                    <span className="text-5xl font-bold tracking-tight font-display text-foreground">
-                      {tier.price}
-                    </span>
-                    {tier.period && (
-                      <span className="text-sm font-semibold text-muted-foreground">{tier.period}</span>
-                    )}
-                  </div>
-
-                  <ul className="mt-8 flex flex-col gap-4 border-t border-primary/5 pt-6">
-                    {tier.features.map((f) => (
-                      <li key={f} className="flex items-start gap-3 text-sm">
-                        <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
-                          <Check className="size-3" />
+          <ScrollFadeUp>
+            <div className="mx-auto mt-16 grid max-w-sm gap-8 sm:max-w-none md:grid-cols-2 lg:max-w-4xl">
+              {tiers.map((tier) => (
+                <div
+                  key={tier.name}
+                  className={`flex flex-col justify-between rounded-3xl p-8 border transition-all duration-300 ${
+                    tier.featured
+                      ? "border-primary bg-gradient-to-b from-card to-primary/5 shadow-soft-lg scale-102"
+                      : "border-border bg-card shadow-soft hover:border-primary/25 hover:shadow-soft-lg"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="text-xl font-bold font-display text-foreground">{tier.name}</h3>
+                      {tier.featured && (
+                        <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-bold tracking-wide text-primary">
+                          Recommended
                         </span>
-                        <span className="text-foreground/90">{f}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                      )}
+                    </div>
+                    <p className="mt-4 text-sm text-muted-foreground/80 leading-relaxed">
+                      {tier.description}
+                    </p>
+                    <div className="mt-6 flex items-baseline gap-1">
+                      <span className="text-5xl font-bold tracking-tight font-display text-foreground">
+                        {tier.price}
+                      </span>
+                      {tier.period && (
+                        <span className="text-sm font-semibold text-muted-foreground">{tier.period}</span>
+                      )}
+                    </div>
 
-                <div className="mt-8 pt-4">
-                  <Button
-                    size="lg"
-                    className="w-full text-base font-semibold"
-                    variant={tier.featured ? "default" : "outline"}
-                    nativeButton={false}
-                    render={<Link href={tier.href}>{tier.buttonText}</Link>}
-                  />
+                    <ul className="mt-8 flex flex-col gap-4 border-t border-primary/5 pt-6">
+                      {tier.features.map((f) => (
+                        <li key={f} className="flex items-start gap-3 text-sm">
+                          <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary mt-0.5">
+                            <Check className="size-3" />
+                          </span>
+                          <span className="text-foreground/90">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="mt-8 pt-4">
+                    <Button
+                      size="lg"
+                      className="w-full text-base font-semibold"
+                      variant={tier.featured ? "default" : "outline"}
+                      nativeButton={false}
+                      render={<Link href={tier.href}>{tier.buttonText}</Link>}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </ScrollFadeUp>
         </main>
       </div>
       <LandingFooter />
