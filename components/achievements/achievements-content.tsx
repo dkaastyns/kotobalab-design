@@ -162,7 +162,7 @@ export function AchievementsContent() {
                   key={filter}
                   onClick={() => setActiveFilter(filter)}
                   className={cn(
-                    "px-4 py-1.5 rounded-xl text-xs font-semibold capitalize tracking-wide transition-colors border relative overflow-hidden",
+                    "px-4 py-1.5 rounded-xl text-xs font-semibold capitalize tracking-wide transition-colors border relative overflow-hidden isolate",
                     activeFilter === filter
                       ? "text-primary-foreground border-primary shadow-soft"
                       : "bg-card border-border/80 text-muted-foreground hover:bg-muted"

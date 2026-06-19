@@ -79,7 +79,7 @@ function NavSection({
             href={item.href}
             title={collapsed ? item.label : undefined}
             className={cn(
-              "group flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium transition-colors relative overflow-hidden",
+              "group flex items-center gap-3 rounded-xl py-2.5 text-sm font-medium transition-colors relative overflow-hidden isolate",
               collapsed ? "justify-center px-0" : "px-3",
               active
                 ? "text-secondary-foreground shadow-soft"

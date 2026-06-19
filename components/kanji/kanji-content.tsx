@@ -133,7 +133,7 @@ export function KanjiContent() {
               key={level}
               onClick={() => setActiveLevel(level)}
               className={cn(
-                "px-4 py-1.5 rounded-full text-sm font-semibold border transition-all relative overflow-hidden",
+                "px-4 py-1.5 rounded-full text-sm font-semibold border transition-all relative overflow-hidden isolate",
                 activeLevel === level
                   ? "text-primary-foreground border-primary shadow-sm"
                   : "bg-card text-muted-foreground border-border/80 hover:border-primary/40 hover:text-foreground"
