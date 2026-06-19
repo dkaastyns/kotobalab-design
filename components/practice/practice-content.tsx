@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils"
 import { useCurrentUser } from "@/hooks/use-user"
 import { motion, AnimatePresence } from "framer-motion"
 import { fadeInUp, staggerContainer, staggerItem, scaleIn } from "@/lib/animations"
+import { Confetti } from "@/components/shared/confetti"
 
 type PracticeQuestion = {
   level: string
@@ -49,23 +50,33 @@ export function PracticeContent() {
   const [combo, setCombo] = useState(0)
   const [correctCount, setCorrectCount] = useState(0)
   const [sessionDone, setSessionDone] = useState(false)
+  
+  // Animation states for active feedback
+  const [isShaking, setIsShaking] = useState(false)
+  const [isBouncing, setIsBouncing] = useState(false)
 
   const isCorrect = q && selected === q.correct
 
   const reset = () => {
     setSelected(null)
     setSubmitted(false)
+    setIsShaking(false)
+    setIsBouncing(false)
   }
 
   const handleCheck = useCallback(() => {
     setSubmitted(true)
     if (q && selected === q.correct) {
+      setIsBouncing(true)
+      setTimeout(() => setIsBouncing(false), 600)
       setCombo(c => c + 1)
       setCorrectCount(c => c + 1)
       incrementStreak()
       recordCorrectAnswer()
       addXP(15)
     } else {
+      setIsShaking(true)
+      setTimeout(() => setIsShaking(false), 500)
       setCombo(0)
     }
   }, [q, selected, incrementStreak, recordCorrectAnswer, addXP])
@@ -142,8 +153,9 @@ export function PracticeContent() {
         variants={staggerContainer}
         initial="initial"
         animate="animate"
-        className="mx-auto flex w-full max-w-2xl flex-col items-center gap-6 py-10"
+        className="mx-auto flex w-full max-w-2xl flex-col items-center gap-6 py-10 relative"
       >
+        <Confetti />
         <motion.div
           animate={{ y: [0, -8, 0] }}
           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
@@ -247,78 +259,98 @@ export function PracticeContent() {
       </motion.div>
 
       {/* Question card */}
-      <motion.div variants={fadeInUp}>
-        <Card className="shadow-soft">
-          <CardHeader className="flex flex-row items-start justify-between gap-4">
-            <div className="flex flex-col gap-1">
-              <CardTitle className="text-pretty text-2xl leading-snug">{q.prompt}</CardTitle>
-              <p className="text-sm text-muted-foreground">{q.instruction}</p>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Bookmark question"
-              onClick={() => setBookmarked((b) => !b)}
-            >
-              <Bookmark className={cn(bookmarked && "fill-primary text-primary")} />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <motion.div
-              key={number}
-              variants={staggerContainer}
-              initial="initial"
-              animate="animate"
-              className="flex flex-col gap-3"
-            >
-              {q.choices.map((c) => {
-                const chosen = selected === c.id
-                const correct = c.id === q.correct
-                const showState = submitted && (correct || chosen)
-                return (
-                  <motion.button
-                    key={c.id}
-                    variants={staggerItem}
-                    whileHover={!submitted ? { scale: 1.01, x: 2 } : undefined}
-                    whileTap={!submitted ? { scale: 0.99 } : undefined}
-                    type="button"
-                    disabled={submitted}
-                    onClick={() => setSelected(c.id)}
-                    className={cn(
-                      "flex items-center gap-4 rounded-xl border bg-card p-4 text-left transition-colors w-full",
-                      !submitted && "hover:border-primary/50 hover:bg-primary/5",
-                      chosen && !submitted && "border-primary bg-primary/5",
-                      showState && correct && "border-[oklch(0.6_0.13_155)] bg-[oklch(0.95_0.04_155)]",
-                      showState && chosen && !correct && "border-destructive bg-destructive/5",
-                    )}
-                  >
-                    <span
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={number}
+          initial={{ x: 40, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          exit={{ x: -40, opacity: 0 }}
+          transition={{ type: "spring", stiffness: 250, damping: 23 }}
+        >
+          <Card className="shadow-soft">
+            <CardHeader className="flex flex-row items-start justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <CardTitle className="text-pretty text-2xl leading-snug">{q.prompt}</CardTitle>
+                <p className="text-sm text-muted-foreground">{q.instruction}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Bookmark question"
+                onClick={() => setBookmarked((b) => !b)}
+              >
+                <Bookmark className={cn(bookmarked && "fill-primary text-primary")} />
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <motion.div
+                variants={staggerContainer}
+                initial="initial"
+                animate="animate"
+                className="flex flex-col gap-3"
+              >
+                {q.choices.map((c) => {
+                  const chosen = selected === c.id
+                  const correct = c.id === q.correct
+                  const showState = submitted && (correct || chosen)
+                  
+                  // Active feedback shake/bounce animations
+                  const buttonAnimate = chosen && isShaking
+                    ? { x: [0, -8, 8, -8, 8, -4, 4, 0] }
+                    : chosen && isBouncing && correct
+                    ? { scale: [1, 1.04, 0.96, 1.02, 1] }
+                    : { x: 0, scale: 1 }
+
+                  return (
+                    <motion.button
+                      key={c.id}
+                      variants={staggerItem}
+                      animate={buttonAnimate}
+                      transition={{
+                        x: { duration: 0.4, ease: "easeInOut" },
+                        scale: { duration: 0.5, ease: "easeInOut" },
+                      }}
+                      whileHover={!submitted ? { scale: 1.01, x: 2 } : undefined}
+                      whileTap={!submitted ? { scale: 0.99 } : undefined}
+                      type="button"
+                      disabled={submitted}
+                      onClick={() => setSelected(c.id)}
                       className={cn(
-                        "flex size-9 shrink-0 items-center justify-center rounded-lg border font-semibold uppercase",
-                        chosen && !submitted && "border-primary text-primary",
-                        showState && correct && "border-[oklch(0.6_0.13_155)] text-[oklch(0.45_0.12_155)]",
-                        showState && chosen && !correct && "border-destructive text-destructive",
+                        "flex items-center gap-4 rounded-xl border bg-card p-4 text-left transition-colors w-full",
+                        !submitted && "hover:border-primary/50 hover:bg-primary/5",
+                        chosen && !submitted && "border-primary bg-primary/5",
+                        showState && correct && "border-[oklch(0.6_0.13_155)] bg-[oklch(0.95_0.04_155)]",
+                        showState && chosen && !correct && "border-destructive bg-destructive/5",
                       )}
                     >
-                      {showState && correct ? (
-                        <Check className="size-4" />
-                      ) : showState && chosen && !correct ? (
-                        <X className="size-4" />
-                      ) : (
-                        c.id
-                      )}
-                    </span>
-                    <span className="flex flex-col">
-                      <span className="text-lg font-medium">{c.label}</span>
-                      <span className="text-sm text-muted-foreground">{c.text}</span>
-                    </span>
-                  </motion.button>
-                )
-              })}
-            </motion.div>
-          </CardContent>
-        </Card>
-      </motion.div>
+                      <span
+                        className={cn(
+                          "flex size-9 shrink-0 items-center justify-center rounded-lg border font-semibold uppercase",
+                          chosen && !submitted && "border-primary text-primary",
+                          showState && correct && "border-[oklch(0.6_0.13_155)] text-[oklch(0.45_0.12_155)]",
+                          showState && chosen && !correct && "border-destructive text-destructive",
+                        )}
+                      >
+                        {showState && correct ? (
+                          <Check className="size-4" />
+                        ) : showState && chosen && !correct ? (
+                          <X className="size-4" />
+                        ) : (
+                          c.id
+                        )}
+                      </span>
+                      <span className="flex flex-col">
+                        <span className="text-lg font-medium">{c.label}</span>
+                        <span className="text-sm text-muted-foreground">{c.text}</span>
+                      </span>
+                    </motion.button>
+                  )
+                })}
+              </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </AnimatePresence>
 
       {/* Action bar */}
       <motion.div variants={fadeInUp} className="flex items-center justify-between">

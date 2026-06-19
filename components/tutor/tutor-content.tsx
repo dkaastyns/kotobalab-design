@@ -9,6 +9,7 @@ import { chatSuggestions } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
 import { useCurrentUser } from "@/hooks/use-user"
 import { toast } from "sonner"
+import { motion, AnimatePresence } from "framer-motion"
 
 interface Message {
   role: "assistant" | "user"
@@ -257,8 +258,11 @@ export function TutorContent() {
           {messages.map((msg, idx) => {
             const isAsst = msg.role === "assistant"
             return (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: "spring", stiffness: 260, damping: 23 }}
                 className={cn("flex w-full gap-3 group", isAsst ? "justify-start" : "justify-end")}
               >
                 {isAsst && (
@@ -291,43 +295,57 @@ export function TutorContent() {
                     <User className="size-4.5" />
                   </div>
                 )}
-              </div>
+              </motion.div>
             )
           })}
 
-          {isTyping && (
-            <div className="flex w-full gap-3 justify-start">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary mt-1">
-                <Bot className="size-4.5" />
-              </div>
-              <div className="bg-card border border-primary/10 rounded-2xl p-4 text-sm shadow-soft flex items-center gap-1.5">
-                <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "300ms" }} />
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {isTyping && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -5, scale: 0.95, transition: { duration: 0.15 } }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                className="flex w-full gap-3 justify-start"
+              >
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary mt-1">
+                  <Bot className="size-4.5" />
+                </div>
+                <div className="bg-card border border-primary/10 rounded-2xl p-4 text-sm shadow-soft flex items-center gap-1.5">
+                  <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "0ms" }} />
+                  <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "150ms" }} />
+                  <span className="size-2 rounded-full bg-primary/60 animate-bounce" style={{ animationDelay: "300ms" }} />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Error state */}
-          {error && (
-            <div className="flex w-full gap-3 justify-start">
-              <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive mt-1">
-                <AlertCircle className="size-4.5" />
-              </div>
-              <div className="max-w-[85%] rounded-2xl p-4 text-sm shadow-soft bg-destructive/5 border border-destructive/20 text-foreground flex flex-col gap-3">
-                <p className="text-destructive font-medium">Failed to get response: {error}</p>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-fit text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
-                  onClick={handleRetry}
-                >
-                  <RefreshCw className="size-3.5 mr-1.5" />
-                  Retry
-                </Button>
-              </div>
-            </div>
-          )}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="flex w-full gap-3 justify-start"
+              >
+                <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-destructive/10 text-destructive mt-1">
+                  <AlertCircle className="size-4.5" />
+                </div>
+                <div className="max-w-[85%] rounded-2xl p-4 text-sm shadow-soft bg-destructive/5 border border-destructive/20 text-foreground flex flex-col gap-3">
+                  <p className="text-destructive font-medium">Failed to get response: {error}</p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-fit text-xs border-destructive/30 text-destructive hover:bg-destructive/10"
+                    onClick={handleRetry}
+                  >
+                    <RefreshCw className="size-3.5 mr-1.5" />
+                    Retry
+                  </Button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <div ref={messagesEndRef} />
         </CardContent>

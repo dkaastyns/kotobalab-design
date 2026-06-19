@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { planner as defaultPlanner } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { motion } from "framer-motion"
 
 const STORAGE_KEY = "kotobalab-planner"
 const ALL_DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -382,7 +383,12 @@ export function PlannerContent() {
               </CardHeader>
               <CardContent className="p-6 flex flex-col gap-2">
                 {day.tasks.map((task, idx) => (
-                  <div key={idx} className="group flex items-center gap-2 w-full hover:bg-muted/50 p-2.5 rounded-xl transition-colors">
+                  <motion.div
+                    layout
+                    key={task.t}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                    className="group flex items-center gap-2 w-full hover:bg-muted/50 p-2.5 rounded-xl transition-colors"
+                  >
                     {/* Toggle done */}
                     <button onClick={() => toggleTask(day.id, idx)} className="shrink-0">
                       {task.done ? (
@@ -448,7 +454,7 @@ export function PlannerContent() {
                         </Button>
                       </div>
                     )}
-                  </div>
+                  </motion.div>
                 ))}
 
                 {/* Add new task inline form */}

@@ -13,6 +13,19 @@ import { toast } from "sonner"
 import { Badge } from "@/components/ui/badge"
 import { motion, AnimatePresence } from "framer-motion"
 import { fadeInUp, staggerContainer, staggerItem, scaleIn } from "@/lib/animations"
+import { Confetti } from "@/components/shared/confetti"
+
+const cardVariants = {
+  initial: { scale: 0.96, opacity: 0, y: 10 },
+  animate: { scale: 1, opacity: 1, y: 0, x: 0, rotate: 0 },
+  exit: (direction: "left" | "right") => ({
+    x: direction === "left" ? -280 : 280,
+    rotate: direction === "left" ? -12 : 12,
+    opacity: 0,
+    scale: 0.95,
+    transition: { duration: 0.3, ease: "easeOut" }
+  })
+}
 
 export function FlashcardsContent() {
   const [cards, setCards] = useState(defaultFlashcards)
@@ -26,6 +39,9 @@ export function FlashcardsContent() {
   const [stats, setStats] = useState({ again: 0, known: 0, mastered: 0 })
   const [isAdding, setIsAdding] = useState(false)
   const [isGenerating, setIsGenerating] = useState(false)
+  
+  // Tinder-style swiping direction
+  const [swipeDirection, setSwipeDirection] = useState<"left" | "right">("right")
 
   // New card state
   const [newFront, setNewFront] = useState("")
@@ -43,6 +59,7 @@ export function FlashcardsContent() {
 
   const handleDifficulty = (rating: "again" | "known" | "mastered") => {
     setStats((prev) => ({ ...prev, [rating]: prev[rating] + 1 }))
+    setSwipeDirection(rating === "again" ? "left" : "right")
     setIsFlipped(false)
 
     setTimeout(() => {
@@ -261,14 +278,15 @@ export function FlashcardsContent() {
             <Progress value={progressPercent} className="h-2 transition-all duration-500" />
           </motion.div>
 
-          {/* Flashcard container */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentIndex}
-              initial={{ scale: 0.96, opacity: 0, x: 25 }}
-              animate={{ scale: 1, opacity: 1, x: 0 }}
-              exit={{ scale: 0.96, opacity: 0, x: -25 }}
-              whileHover={{ scale: 1.01 }}
+              custom={swipeDirection}
+              variants={cardVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              whileHover={{ scale: 1.015 }}
               transition={{ type: "spring", stiffness: 220, damping: 20 }}
               className="group relative h-96 w-full cursor-pointer [perspective:1000px]"
               onClick={handleFlip}
@@ -377,7 +395,8 @@ export function FlashcardsContent() {
           </motion.div>
         </div>
       ) : (
-        <motion.div variants={scaleIn}>
+        <motion.div variants={scaleIn} className="relative">
+          <Confetti />
           <Card className="border-primary/20 shadow-soft bg-gradient-to-br from-card to-primary/5 p-8 text-center flex flex-col items-center gap-6 rounded-3xl">
             <div className="flex size-16 items-center justify-center rounded-2xl bg-primary/10 text-primary">
               <Sparkles className="size-8" />
