@@ -23,7 +23,7 @@ const cardVariants = {
     rotate: direction === "left" ? -12 : 12,
     opacity: 0,
     scale: 0.95,
-    transition: { duration: 0.3, ease: "easeOut" }
+    transition: { duration: 0.3, ease: "easeOut" as const }
   })
 }
 
